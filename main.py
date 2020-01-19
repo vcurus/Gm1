@@ -23,18 +23,22 @@ level = [
     '-                                                                  --                                                                                      -',
     '------------------------------------------------------------------------------------------------------------------------------------------------------------']
 
+BRICK_WIDTH, BRICK_HEIGHT = 30, 30
+BRICK_COLOR = (0, 255, 0)
+BRICK_COLOR_2 = (255, 255, 0)
 WIN_WIDTH, WIN_HEIGHT = 780, 630
 BG_COLOR = (192, 192, 192)
-BG_COLOR_2 = (192, 192, 192), (True, RED, None)
 RED = (255, 0, 0)
+BG_COLOR_2 = (192, 192, 192), (True, RED, None)
 FPS = 60
-clock = pygame.timez
+clock = pygame.time.Clock()
 x1, y1 = WIN_WIDTH // 2, WIN_HEIGHT // 2
 PLAYER_SIZE = 40
-BG_SPEED = 0.3
+BG_SPEED = 3
 dx = 0
 PLAYER_SPEED = 3
-penalty = 0
+penalty = 0.0
+BTN_W, BTN_H = 220, 60
 
 pygame.init()
 pygame.display.set_caption("первая игра")
@@ -50,6 +54,11 @@ pygame.draw.arc(player, (255, 215, 0), (0, 12, 24, 20), 3.6, 6.0, 3)
 player_rect = player.get_rect(center=(WIN_WIDTH // 2, WIN_HEIGHT // 2))
 
 text = pygame.font.SysFont('Arial', 22, True, False)
+text_xy = ((WIN_WIDTH - text.size(f'Штрафных очкв {round(penalty, 1)}')[0]) // 2, 30)
+
+btn = pygame.Surface((BTN_W, BTN_H))
+text1 = 'Играть снова!'
+text1_xy = text.size(text1)
 
 run = True
 while run:
@@ -72,6 +81,12 @@ while run:
 
     screen.fill(BG_COLOR)
     dx -= BG_SPEED
+    if dx > WIN_WIDTH * 4:
+       dx -= BG_SPEED 
+    else:
+       if player_rect.x < WIN_WIDTH - PLAYER_SIZE:
+           player_rect.x += PLAYER_SPEED
+
     x = dx
     y = 0
     for row in level:
@@ -89,9 +104,7 @@ while run:
     screen.blit(player, player_rect)
     pygame.display.set_caption(F' FPS: {round(clock.get_fps(), 2)}')
     screen.blit(
-        text.render(f'Штрафных очкв {round(penalty, 1)}', True, RED, None),
-        (WIN_WIDTH - text.size(f'Штрафных очкв {round(penalty, 1)}')[0] - 5, 30)
-    )
+        text.render(f'Штрафных очкв {round(penalty, 1)}', True, RED, None), text_xy)
 
     pygame.display.update()
     clock.tick(FPS)
